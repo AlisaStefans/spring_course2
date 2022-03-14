@@ -17,6 +17,7 @@ public class Test1 {
                 .addAnnotatedClass(Employee.class)
                 .addAnnotatedClass(Detail.class)
                 .buildSessionFactory();
+        Session session = null;
         try {
 //            Session session = factory.getCurrentSession();
 //
@@ -33,22 +34,22 @@ public class Test1 {
 //            session.getTransaction().commit();
 //            System.out.println("Done!");
 
-            Session session = factory.getCurrentSession();
-
-            Employee employee = new Employee("Oleg","Smirnov"
-                    ,"Sales", 700 );
-
-            Detail detail = new Detail ("Moscow", "123456789"
-                    , "zaurtregulov@gmail.com");
-            employee.setEmpDetail(detail);
+            session = factory.getCurrentSession();
 
             session.beginTransaction();
 
-            session.save(employee);
+            // Получаем детали работника применяя каскад
+            Employee emp = session.get(Employee.class, 2);
+            System.out.println(emp.getEmpDetail());
+
+            session.delete(emp);
+
+
             session.getTransaction().commit();
             System.out.println("Done!");
         }
         finally {
+            session.close();
             factory.close();
         }
 
